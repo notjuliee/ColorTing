@@ -4,6 +4,7 @@ from sys import argv
 import os
 import re
 import serial
+import sqlite3
 
 rofi = ""
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -16,10 +17,12 @@ def applyRazer(r, g, b):
         % (r, g, b))
 
 
-def applyi3(primary, secondary):
+def applyi3(primary, secondary, background):
     i3conf = open("%s/.config/i3/config" % home_dir).read()
     i3conf = re.sub(r"set \$color #.{1,6}", "set $color #%s" % primary, i3conf)
     i3conf = re.sub(r"set \$color_uf #.{1,6}", "set $color_uf #%s" % secondary,
+                    i3conf)
+    i3conf = re.sub(r"set \$color_2 #.{1,6}", "set $color_2 #%s" % background,
                     i3conf)
     with open("%s/.config/i3/config" % home_dir, 'w') as file:
         file.write(i3conf)
@@ -85,6 +88,8 @@ def applyLed(red, green, blue):
     with serial.Serial("/dev/ttyACM0") as ser:
         ser.write(b"%d %d %d\n" % ((255 - red), (255 - green), (255 - blue)))
 
+def applyFirefox(primary, secondary, background):
+    db = sqlite3.connect("%s/.mozilla/firefox/mg23unpc.dev-edition-default")
 
 def applyCmus(red, green, blue):
     primary = (36 * round(red[0] / 51)) + (6 * round(green[0] / 51)) + round(
@@ -116,7 +121,6 @@ def applyCmus(red, green, blue):
         "win_bg=%d" % background,
         "win_inactive_cur_sel_bg=%d" % background,
         "win_inactive_sel_bg=%d" % background,
-        "win_sel_bg=%d" % background,
         "win_title_bg=%d" % background
     ]
 

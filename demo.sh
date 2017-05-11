@@ -13,9 +13,9 @@ figlet "BLUE"
 ./chameleon.py 0000ff 000066 000000
 sleep 4
 figlet "============"
-figlet "LIGHT"
-./chameleon.py 222222 444444 ffffff
+figlet "BLACK"
+./chameleon.py 222222 444444 dddddd
 sleep 4
 figlet "============"
-figlet "PURPLE"
-./chameleon.py ff00ff 660066 000000
+figlet "WHITE"
+./chameleon.py ffffff dddddd 000000
