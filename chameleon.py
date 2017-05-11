@@ -143,7 +143,7 @@ def main():
     applyRazer(argv[1][:2], argv[1][2:4], argv[1][4:])
 
     print("Applying to i3")
-    applyi3(argv[1], argv[2])
+    applyi3(argv[1], argv[2], argv[3])
 
     print("Applying to Polybar")
     applyPolybar(argv[1], argv[2], argv[3])
