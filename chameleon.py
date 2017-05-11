@@ -87,11 +87,11 @@ def applyLed(red, green, blue):
 
 
 def applyCmus(red, green, blue):
-    primary = (36 * int(red[0] / 51)) + (6 * int(green[0] / 51)) + int(
+    primary = (36 * round(red[0] / 51)) + (6 * round(green[0] / 51)) + round(
         blue[0] / 51) + 16
-    secondary = (36 * int(red[1] / 51)) + (6 * int(green[1] / 51)) + int(
+    secondary = (36 * round(red[1] / 51)) + (6 * round(green[1] / 51)) + round(
         blue[1] / 51) + 16
-    background = (36 * int(red[2] / 51)) + (6 * int(green[2] / 51)) + int(
+    background = (36 * round(red[2] / 51)) + (6 * round(green[2] / 51)) + round(
         blue[2] / 51) + 16
 
     colors = [
