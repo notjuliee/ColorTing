@@ -34,8 +34,8 @@ def applyPolybar(primary, secondary, background):
                          polybarConf)
     polybarConf = re.sub(r"secondary = #.{1,6}", "secondary = #%s" % secondary,
                          polybarConf)
-    polybarConf = re.sub(r"background = #.{1,6}", "background = #%s" % background,
-                         polybarConf)
+    polybarConf = re.sub(r"background = #.{1,6}",
+                         "background = #%s" % background, polybarConf)
     polybarConf = re.sub(r"secondary = #.{1,6}", "secondary = #%s" % secondary,
                          polybarConf)
     with open("%s/.config/polybar/config" % home_dir, 'w') as file:
@@ -44,8 +44,8 @@ def applyPolybar(primary, secondary, background):
 
 def applyCava(primary):
     cavaConf = open("%s/.config/cava/config" % home_dir).read()
-    cavaConf = re.sub(r"foreground = '#.{1,6}'", "foreground = '#%s'" % primary,
-                      cavaConf)
+    cavaConf = re.sub(r"foreground = '#.{1,6}'",
+                      "foreground = '#%s'" % primary, cavaConf)
     with open("%s/.config/cava/config" % home_dir, 'w') as file:
         file.write(cavaConf)
 
@@ -67,7 +67,8 @@ def applyRofi(primary, secondary):
 
 def applyTerm(red, green, blue):
     with open("%s/.gtcolors" % home_dir, 'w') as file:
-        file.write("rgb(%d,%d,%d)\nrgb(%d,%d,%d)" % (red[0], green[0], blue[0],red[2], green[2], blue[2]))
+        file.write("rgb(%d,%d,%d)\nrgb(%d,%d,%d)" %
+                   (red[0], green[0], blue[0], red[2], green[2], blue[2]))
 
 
 def applyFish(primary, secondary):
@@ -88,40 +89,47 @@ def applyLed(red, green, blue):
     with serial.Serial("/dev/ttyACM0") as ser:
         ser.write(b"%d %d %d\n" % ((255 - red), (255 - green), (255 - blue)))
 
+
 def applyFirefox(primary, secondary, background):
-    db = sqlite3.connect("%s/.mozilla/firefox/mg23unpc.dev-edition-default")
+    db = sqlite3.connect(
+        "%s/.mozilla/firefox/mg23unpc.dev-edition-default/stylish.sqlite" %
+        home_dir)
+    cr = db.cursor()
+    cr.execute("SELECT code FROM styles WHERE name = 'Auto';")
+    autoStyle = cr.fetchone()[0]
+    autoStyle = re.sub(r"--foreground: #.{1,6};",
+                       "--foreground: #%s;" % primary, autoStyle)
+    rofiConf = re.sub(r"--foreground-alt: #.{1,6};",
+                      "--foreground-alt: #%s;" % secondary, autoStyle)
+    rofiConf = re.sub(r"--background: #.{1,6};",
+                      "--background: #%s;" % background, autoStyle)
+    cr.execute(
+        "UPDATE styles SET code = '%s' WHERE name = 'Auto';" % autoStyle)
+    db.commit()
+    db.close()
+
 
 def applyCmus(red, green, blue):
     primary = (36 * round(red[0] / 51)) + (6 * round(green[0] / 51)) + round(
         blue[0] / 51) + 16
     secondary = (36 * round(red[1] / 51)) + (6 * round(green[1] / 51)) + round(
         blue[1] / 51) + 16
-    background = (36 * round(red[2] / 51)) + (6 * round(green[2] / 51)) + round(
-        blue[2] / 51) + 16
+    background = (36 * round(red[2] / 51)) + (
+        6 * round(green[2] / 51)) + round(blue[2] / 51) + 16
 
     colors = [
-        "cmdline_fg=%d" % primary,
-        "info=%d" % primary,
-        "separator=%d" % primary,
-        "statusline_fg=%d" % primary,
-        "titleline_fg=%d" % primary,
-        "win_cur=%d" % primary,
-        "win_cur_sel_bg=%d" % secondary,
-        "win_cur_sel_fg=%d" % primary,
-        "win_dir=%d" % primary,
-        "win_fg=%d" % primary,
+        "cmdline_fg=%d" % primary, "info=%d" % primary,
+        "separator=%d" % primary, "statusline_fg=%d" % primary,
+        "titleline_fg=%d" % primary, "win_cur=%d" % primary,
+        "win_cur_sel_bg=%d" % secondary, "win_cur_sel_fg=%d" % primary,
+        "win_dir=%d" % primary, "win_fg=%d" % primary,
         "win_inactive_cur_sel_fg=%d" % primary,
-        "win_inactive_sel_fg=%d" % primary,
-        "win_sel_bg=%d" % secondary,
-        "win_sel_fg=%d" % primary,
-        "win_title_fg=%d" % primary,
-        "cmdline_bg=%d" % background,
-        "statusline_bg=%d" % background,
-        "titleline_bg=%d" % background,
-        "win_bg=%d" % background,
+        "win_inactive_sel_fg=%d" % primary, "win_sel_bg=%d" % secondary,
+        "win_sel_fg=%d" % primary, "win_title_fg=%d" % primary,
+        "cmdline_bg=%d" % background, "statusline_bg=%d" % background,
+        "titleline_bg=%d" % background, "win_bg=%d" % background,
         "win_inactive_cur_sel_bg=%d" % background,
-        "win_inactive_sel_bg=%d" % background,
-        "win_title_bg=%d" % background
+        "win_inactive_sel_bg=%d" % background, "win_title_bg=%d" % background
     ]
 
     cmusConf = open("%s/.config/cmus/auto.theme" % home_dir).read()
@@ -135,9 +143,13 @@ def applyCmus(red, green, blue):
 
 
 def main():
-    red = [int(argv[1][:2], 16),int(argv[2][:2], 16),int(argv[3][:2], 16)]
-    green = [int(argv[1][2:4], 16),int(argv[2][2:4], 16),int(argv[3][2:4], 16)]
-    blue = [int(argv[1][4:6], 16),int(argv[2][4:6], 16),int(argv[3][4:6], 16)]
+    red = [int(argv[1][:2], 16), int(argv[2][:2], 16), int(argv[3][:2], 16)]
+    green = [
+        int(argv[1][2:4], 16), int(argv[2][2:4], 16), int(argv[3][2:4], 16)
+    ]
+    blue = [
+        int(argv[1][4:6], 16), int(argv[2][4:6], 16), int(argv[3][4:6], 16)
+    ]
 
     print("Applying to keyboard")
     applyRazer(argv[1][:2], argv[1][2:4], argv[1][4:])
@@ -157,6 +169,9 @@ def main():
     print("Applying to gnome_terminal")
     applyTerm(red, green, blue)
 
+    print("Applying to Firefox")
+    applyFirefox(argv[1], argv[2], argv[3])
+
     print("Applying to cava")
     applyCava(argv[1])
 
@@ -171,6 +186,7 @@ def main():
 
 
 if len(argv) < 4:
-    print("Usage: %s <Primary Color> <Secondary Color> <Background Color>" % argv[0])
+    print("Usage: %s <Primary Color> <Secondary Color> <Background Color>" %
+          argv[0])
 else:
     main()
