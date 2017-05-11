@@ -5,6 +5,8 @@
 
 (Note: I'm assuming you're using either bash or fish on gnome-terminal)
 
+Requires python3 and PySerial!
+
 Make sure you edit `chameleon.py` and `reload_all.sh` and comment out everything that you don't have on your system.
 
 For example, if you're using bash instead of fish comment out 
