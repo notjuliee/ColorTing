@@ -184,6 +184,7 @@ def main():
     print("Applying to LED strip")
     applyLed(red[0], green[0], blue[0])
 
+    print("All done :D")
 
 if len(argv) < 4:
     print("Usage: %s <Primary Color> <Secondary Color> <Background Color>" %

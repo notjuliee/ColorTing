@@ -19,6 +19,8 @@ in main.py, and ignore instructions for Fish in this document.
 
 Check all the paths in `chameleon.py` and make sure they're correct for your system.
 
+If you've followed all the instructions in this document and still can't get it to work, feel free to PM me [here](https://www.reddit.com/message/compose?to=joonatoona&subject=full_rgb)
+
 ## Special changes
 
 ### Polybar
