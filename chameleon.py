@@ -87,7 +87,27 @@ def applyFish(primary, secondary):
 
 def applyLed(red, green, blue):
     with serial.Serial("/dev/ttyACM0") as ser:
-        ser.write(b"%d %d %d\n" % ((255 - red), (255 - green), (255 - blue)))
+        ser.write(b"0 %d %d %d\n" % ((255 - red), (255 - green), (255 - blue)))
+
+
+def applyTwmn(primary, background):
+    twmnConf = open("%s/.config/twmn/twmn.conf" % home_dir).read()
+    twmnConf = re.sub(r"foreground_color=#.{1,6}",
+                      "foreground_color=#%s" % primary, twmnConf)
+    twmnConf = re.sub(r"background_color=#.{1,6}",
+                      "background_color=#%s" % background, twmnConf)
+    with open("%s/.config/twmn/twmn.conf" % home_dir, 'w') as file:
+        file.write(twmnConf)
+
+
+def applyi3lock(primary, primary2):
+    i3lockConf = open("%s/src/BlurLocker/lock.sh" % home_dir).read()
+    i3lockConf = re.sub(r"COLOR='#.{1,6}'", "COLOR='#%s'" % primary,
+                        i3lockConf)
+    i3lockConf = re.sub(r"COLOR2='.{1,3}'", "COLOR2='%s'" % primary2,
+                        i3lockConf)
+    with open("%s/src/BlurLocker/lock.sh" % home_dir, 'w') as file:
+        file.write(i3lockConf)
 
 
 def applyFirefox(primary, secondary, background):
@@ -151,14 +171,21 @@ def main():
         int(argv[1][4:6], 16), int(argv[2][4:6], 16), int(argv[3][4:6], 16)
     ]
 
+    primaryCode = (36 * round(red[0] / 51)) + (6 * round(green[0] / 51)) + round(
+        blue[0] / 51) + 16
+    secondaryCode = (36 * round(red[1] / 51)) + (6 * round(green[1] / 51)) + round(
+        blue[1] / 51) + 16
+    backgroundCode = (36 * round(red[2] / 51)) + (
+        6 * round(green[2] / 51)) + round(blue[2] / 51) + 16
+
     print("Applying to keyboard")
     applyRazer(argv[1][:2], argv[1][2:4], argv[1][4:])
 
     print("Applying to i3")
     applyi3(argv[1], argv[2], argv[3])
 
-    print("Applying to Polybar")
-    applyPolybar(argv[1], argv[2], argv[3])
+#    print("Applying to Polybar")
+#    applyPolybar(argv[1], argv[2], argv[3])
 
     print("Applying to rofi")
     applyRofi(argv[1], argv[2])
@@ -175,8 +202,14 @@ def main():
     print("Applying to cava")
     applyCava(argv[1])
 
+#    print("Applying to twmn")
+#    applyTwmn(argv[1], argv[3])
+
     print("Applying to cmus")
     applyCmus(red, green, blue)
+
+    print("Applying to i3lock")
+    applyi3lock(argv[1], primaryCode)
 
     print("Reloading Everything")
     os.system("%s/reload_all.sh" % dir_path)
@@ -185,6 +218,7 @@ def main():
     applyLed(red[0], green[0], blue[0])
 
     print("All done :D")
+
 
 if len(argv) < 4:
     print("Usage: %s <Primary Color> <Secondary Color> <Background Color>" %

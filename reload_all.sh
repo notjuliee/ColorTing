@@ -7,7 +7,14 @@ echo "Reloading rofi"
 xrdb -merge ~/.Xdefaults &
 
 echo "Restarting all instances of cava"
-killall /home/joonatoona/Apps/bin/.libs/lt-cava &> /dev/null &
+killall /usr/bin/cava &> /dev/null &
 
 echo "Reloading cmus"
 cmus-remote -C "colorscheme auto" &> /dev/null &
+
+echo "Reloading twmn"
+killall twmnd
+nohup twmnd &> /dev/null &
+
+sleep 1 && twmnc "chameleon.py done" &
+echo "Done!"
